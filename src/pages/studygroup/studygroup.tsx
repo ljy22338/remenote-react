@@ -5,7 +5,7 @@ import { history } from 'umi';
 import { Action } from "antd-mobile/es/components/action-sheet";
 import { AddOutline } from "antd-mobile-icons";
 import {Showlist} from "@/components/list";
-import { books, cards, mindmaps } from "../data/mock";
+// import { books, cards, mindmaps } from "../../data/mock";
 export default function StudyGroup() {
 
     const actions: Action[] = [
@@ -60,7 +60,7 @@ export default function StudyGroup() {
                 actions={actions}
                 onClose={() => setVisible(false)}
             />
-            <Tabs>
+            {/* <Tabs>
                 <Tabs.Tab title='笔记' key='fruits'>
                     <Showlist items={books} handleclick={()=>{history.push(path.displaynote)}} />
                 </Tabs.Tab>
@@ -70,7 +70,7 @@ export default function StudyGroup() {
                 <Tabs.Tab title='导图' key='animals'>
                     <Showlist items={mindmaps} handleclick={()=>{history.push(path.displaymindmap)}} />
                 </Tabs.Tab>
-            </Tabs>
+            </Tabs> */}
 
         </>
     );

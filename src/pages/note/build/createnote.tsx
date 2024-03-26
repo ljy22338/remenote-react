@@ -1,52 +1,71 @@
-import React from 'react';
-import { history } from 'umi';
-import { path } from '@/constant/path';
-import { Avatar, List } from 'antd-mobile';
+import React, { useEffect, useState } from 'react';
+import { history, useRequest } from 'umi';
+import { Avatar, Button, Card, CheckList, Input, List } from 'antd-mobile';
+import { defaultoption, runableoption, createnote, baseUrl, notebooklist } from '@/service/note';
+import { NotebookListVo, NotebookVo } from '@/service/entity/response';
+import Loading from '@/pages/loading';
+import { CheckCircleFill, CheckCircleOutline } from 'antd-mobile-icons';
 
 export default function CreateNote() {
-    const books = [
-        {
-            name: '默认知识库',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            description: '默认知识库的描述信息',
-        },
-        {
-            name: '第一知识库',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            description: '第一知识库的描述信息',
-        },
-        {
-            name: '第二知识库',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            description: '第二知识库的描述信息',
-        },
-    ];
+    const { data, error, loading } = useRequest(notebooklist, defaultoption);
+    const { run, data: createnotedata } = useRequest(createnote, runableoption);
+    const [noteTitle, setNoteTitle] = useState('')
+    const [selected, setSelected] =useState <number>(0)
+
+
     function handleClick() {
-        history.push(path.notedetail);
+        console.log(noteTitle, selected)
+        if (noteTitle === ''|| selected === 0) {
+            alert('笔记名称不能为空或未选择笔记本')
+            return
+        }
+        run({
+            noteTitle: noteTitle,
+            content: '默认内容',
+            noteOwnerName: '',
+            notebookId: selected,
+            notebookDescription:'',
+            delNoteId: 0,
+            notebookName: '',
+            isPublic: '',
+            srcNotebook: '',
+            srcTitle: '',
+            move: false
+        }).then((res) => {})
     }
+    useEffect(() => {
+        if (createnotedata) {
+            console.log(createnotedata)
+        }
+    }, [createnotedata])
+
+    if (loading) return <Loading />
+    if (error) return <Loading />
     return (
         <>
-            <List mode='card' header='笔记本列表'>
-                {books.map(note => (
-                    <List.Item
-                        clickable={true}
-                        onClick={handleClick}
-                        key={note.name}
-                        prefix={
-                            <>
-                                <Avatar
-                                    src={note.avatar}
-                                    style={{ borderRadius: 5 }}
-                                    fit='cover'
-                                />
-                            </>
-                        }
-                        description={note.description}
-                    >
-                        {note.name}
-                    </List.Item>
-                ))}
-            </List>
+            <Card title="笔记名称" className=' m-3'>
+                <Input value={noteTitle} onChange={setNoteTitle} clearable />
+            </Card>
+
+            <Card title="选择笔记本" className=' m-3'>
+                <CheckList
+                    extra={active => active ? <CheckCircleFill /> : <CheckCircleOutline />}
+                    onChange={(val: any) => { setSelected(val[0]) }}
+                >
+                    {(data as NotebookListVo).notebookList.map((value: NotebookVo) => (
+                        <CheckList.Item
+                            key={value.notebookId}
+                            value={value.notebookId}
+                        >
+                            {value.notebookName}
+                        </CheckList.Item>
+                    ))}
+                </CheckList>
+            </Card>
+
+            <Card className=' m-3'>
+                <Button onClick={handleClick} color='primary' block>创建</Button>
+            </Card>
         </>
     );
 }

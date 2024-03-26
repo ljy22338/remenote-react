@@ -2,7 +2,6 @@ import { FloatingBubble } from 'antd-mobile';
 import { AddOutline, MessageFill } from 'antd-mobile-icons'
 import React from 'react';
 import { useEffect, useRef } from 'react';
-
 export const FloatButton =(props:{onClick:()=>void})=>(
     <FloatingBubble
     style={{
@@ -22,6 +21,7 @@ export function FloatPanel(props: {
     bottom?: string
     right?: string
 }) {
+
     const floatButtonRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
         const floatButton = floatButtonRef.current
@@ -36,7 +36,7 @@ export function FloatPanel(props: {
         }} className='   rounded-3xl bg-slate-200 shadow-sm 
         flex items-center justify-center
             fixed right-5 left-5 bottom-6
-            z-50
+            z-50  flex-wrap
          active:'>
             {props.children}
         </div>

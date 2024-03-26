@@ -3,17 +3,15 @@ const notelist = '/note/notelist';
 const notedetail = '/note/notedetail';
 const createnote = '/note/build/createnote';
 const createnotebook = '/note/build/createnotebook';
+export const getnotedetailpath = (id?: number) => {
+    return notedetail + "/" + String(id);
+}
 
 const rememberCard = '/card/remembercard';
 const carddetail = '/card/carddetail';
 const createcard = '/card/build/createcard';
 const genecard = '/card/build/genecard';
-const choosenote2card= '/card/build/choosenote';
-
-const mindMap = '/mindmap/mindmap';
-const genemindmap = '/mindmap/build/genemindmap';
-const choosenote2mindmap = '/mindmap/build/choosenote';
-
+const choosenote2card = '/card/build/choosenote';
 
 const studyGroup = '/studygroup/studygroup';
 const displaynote = '/studygroup/display/note';
@@ -21,8 +19,11 @@ const displaycard = '/studygroup/display/card';
 const displaymindmap = '/studygroup/display/mindmap';
 const pubmanager = '/studygroup/pubmanager';
 const groupmanager = '/studygroup/groupmanager';
+const joingroup = '/studygroup/joingroup';
 
 const my = '/my/my';
+const changenickn = '/my/changenickn';
+const changepwd = '/my/changepwd';
 
 export const path = {
     notebook,
@@ -30,26 +31,28 @@ export const path = {
     notedetail,
     createnote,
     createnotebook,
+
     rememberCard,
     genecard,
     choosenote2card,
     createcard,
     carddetail,
-    mindMap,
-    genemindmap,    
-    choosenote2mindmap,
+
     studyGroup,
     pubmanager,
     groupmanager,
+    joingroup,
     displaynote,
     displaycard,
     displaymindmap,
-    my
+
+    my,
+    changenickn,
+    changepwd,
 }
 export const mainPath = [
     notebook,
     rememberCard,
-    mindMap,
     studyGroup,
     my
 ]

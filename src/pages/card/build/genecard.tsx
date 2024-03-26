@@ -1,47 +1,39 @@
-import { List , Avatar } from "antd-mobile";
-import {history} from 'umi';
+import { List, Avatar } from "antd-mobile";
+import { history } from 'umi';
 import { path } from "@/constant/path";
+import { NotebookListVo, NotebookVo } from "@/service/entity/response";
+import { useEffect, useState } from "react";
+import { useRequest } from "@/.umi/plugin-request";
+import { notebooklist, runableoption } from "@/service/note";
+import Loading from "@/pages/loading";
 export default function Genecard() {
-    const books = [
-        {
-            name: '默认知识库',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            description: '默认知识库的描述信息',
-        },
-        {
-            name: '第一知识库',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            description: '第一知识库的描述信息',
-        },
-        {
-            name: '第二知识库',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            description: '第二知识库的描述信息',
-        },
-    ];
-    function handleClick() {
-        history.push(path.choosenote2card);
+
+    const { run, data, error, loading } = useRequest(notebooklist, runableoption);
+
+    useEffect(() => {
+        run()
+    }, [])
+    function handleClick(notebook: NotebookVo) {
+        history.push(path.choosenote2card, { notebook: notebook });
     }
+    if (loading) return <Loading />
+    if (error) return <Loading />
     return (
         <>
-           <List mode='card' header='笔记本列表'>
-                {books.map(note => (
+            <List mode='card' header='笔记本列表'>
+                {(data as NotebookListVo)?.notebookList.map((value: NotebookVo) => (
                     <List.Item
                         clickable={true}
-                        onClick={handleClick}
-                        key={note.name}
-                        prefix={
-                            <>
-                                <Avatar
-                                    src={note.avatar}
-                                    style={{ borderRadius: 5 }}
-                                    fit='cover'
-                                />
-                            </>
-                        }
-                        description={note.description}
+                        onClick={() => { handleClick(value) }}
+                        key={value.notebookName}
+                        prefix={<><Avatar
+                            src={"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}
+                            style={{ borderRadius: 5 }}
+                            fit='cover'
+                        /></>}
+                        description={value.description}
                     >
-                        {note.name}
+                        {value.notebookName}
                     </List.Item>
                 ))}
             </List>

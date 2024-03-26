@@ -1,66 +1,50 @@
 
 import { path } from "@/constant/path";
+import { notelist, defaultoption, runableoption } from "@/service/note";
 import { Avatar, ActionSheet, List, Modal, Toast } from "antd-mobile";
 import { Action } from "antd-mobile/es/components/action-sheet";
-import { useState } from "react";
-import { history } from 'umi';
+import { useEffect, useState } from "react";
+import { history, useRequest } from 'umi';
+import Loading from "../loading";
+import { NoteVo, NotebookVo } from "@/service/entity/response";
+
+const actions: Action[] = [
+    { text: '新建空笔记', key: 'copy' },
+    { text: '新建笔记本', key: 'edit' },
+]
 
 export default function NoteList() {
-    const [value, setValue] = useState('')
     const [visible, setVisible] = useState(false)
-
-    const notes = [
-        {
-            name: '笔记本1',
-            description: '这是笔记本1的描述',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        },
-        {
-            name: '笔记本2',
-            description: '这是笔记本2的描述',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        },
-        {
-            name: '笔记本3',
-            description: '这是笔记本3的描述',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        },
-    ];
-    const actions: Action[] = [
-        { text: '新建空笔记', key: 'copy' },
-        { text: '新建笔记本', key: 'edit' },
-
-    ]
-    function handleClick() {
-        history.push(path.notedetail);
-
+    const { run, data, loading, error } = useRequest(notelist, runableoption)
+    const { notebook } = history.location.state as { notebook: NotebookVo }
+    useEffect(() => {
+        run(notebook.notebookId)
+    }, [])
+    function description(content:string){
+        if(content?.length<=40){return content}
+        return content?.substring(0,40)
     }
+    function handleClick(noteTitle: string,notebookName:string) {
+        history.push(path.notedetail,{noteTitle:noteTitle,notebookName:notebookName});
+    }
+    if (loading) return <Loading />
+    if (error) return <Loading />
     return (
         <>
-            {/* <FloatButton handleOnclick={() => setVisible(true)} /> */}
             <ActionSheet
                 visible={visible}
                 actions={actions}
                 onClose={() => setVisible(false)}
             />
             <List mode='card' header='笔记本列表'>
-                {notes.map(notes => (
+                {(data as NoteVo[])?.map(book => (
                     <List.Item
                         clickable={true}
-                        key={notes.name}
-                        onClick={handleClick}
-                        prefix={
-                            <>
-                                <Avatar
-                                    src={notes.avatar}
-                                    style={{ borderRadius: 5 }}
-                                    fit='cover'
-                                />
-                            </>
-                        }
-                        description={notes.description}
+                        key={book.id}
+                        onClick={() => { handleClick(book.title,book.notebookName) }}
+                        description={description(book.content)}
                     >
-                        {notes.name}
+                        {book.title}
                     </List.Item>
                 ))}
             </List>
