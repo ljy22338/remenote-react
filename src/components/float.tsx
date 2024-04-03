@@ -31,12 +31,11 @@ export function FloatPanel(props: {
         if (props.right) floatButton.style.right = props.right
     }, [])
     return (
-        <div ref={floatButtonRef} onClick={(e) => {
-            e.preventDefault()
-        }} className='   rounded-3xl bg-slate-200 shadow-sm 
+        <div ref={floatButtonRef} 
+        className='   rounded-3xl bg-gray-100 shadow-sm 
         flex items-center justify-center
             fixed right-5 left-5 bottom-6
-            z-50  flex-wrap
+            z-50  flex-wrap border border-gray-200
          active:'>
             {props.children}
         </div>

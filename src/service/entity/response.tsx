@@ -46,6 +46,7 @@ export interface StudyGroupVo {
 // }
 export interface NoteVo {
     username: string;
+    nickname:string;
     id: number;
     notebookName: string;
     title: string;

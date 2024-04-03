@@ -1,76 +1,79 @@
-import { ActionSheet, Avatar, Dropdown, FloatingBubble, Input, List, Radio, Space, Tabs } from "antd-mobile";
-import { useState } from "react";
+import { ActionSheet, Avatar, Card, Collapse, Dropdown, FloatingBubble, Input, List, Radio, Space, Tabs } from "antd-mobile";
+import { useEffect, useState } from "react";
 import { path } from "@/constant/path";
 import { history } from 'umi';
 import { Action } from "antd-mobile/es/components/action-sheet";
 import { AddOutline } from "antd-mobile-icons";
-import {Showlist} from "@/components/list";
+import { Showlist } from "@/components/list";
+import { useDispatch, useSelector } from "react-redux";
+import { FloatButton } from "@/components/float";
+import { findgroupnote } from "@/service/studygroup";
+import { useRequest } from "@/.umi/plugin-request";
+import { runableoption } from "@/service/note";
+import { NoteVo } from "@/service/entity/response";
 // import { books, cards, mindmaps } from "../../data/mock";
+
+const actions: Action[] = [
+    { text: '管理公开笔记', key: 'pubmanager', onClick: () => { history.push(path.pubmanager) } },
+    { text: '管理学习小组', key: 'groupmanager', onClick: () => { history.push(path.groupmanager) } },
+]
+interface MemberItem {
+    nickname: string;
+    notelist: NoteVo[];
+}
+
+const liststyle = {
+    "--border-top": " 0px",
+    "--border-inner": "0px",
+    "--border-bottom": "0px",
+    "--padding-left": "0px",
+
+}
+
 export default function StudyGroup() {
-
-    const actions: Action[] = [
-        { text: '管理公开笔记', key: 'pubmanager', onClick: () => { history.push(path.pubmanager) } },
-        { text: '管理学习小组', key: 'groupmanager', onClick: () => { history.push(path.groupmanager) } },
-    ]
-
+    const { run, data, loading, error } = useRequest(findgroupnote, runableoption)
+    const groupName = useSelector((state: any) => state.user.groupName)
     const [visible, setVisible] = useState(false)
-
-    function handleClick() {
-        // history.push(path.mindmaplist);
+    useEffect(() => {run()}, [])
+    useEffect(() => {if (!data) { run()}}, [data])
+    function handleClicNote(note:NoteVo) {
+        history.push(path.notedetail, { note: note })
+    }
+    function toMembers() {
+        const newData: MemberItem[] = [];
+        (data as NoteVo[])?.forEach(item => {
+            const existingUser = newData.find(entry => entry.nickname === item.nickname);
+            if (existingUser) {
+                existingUser.notelist.push(item);
+            } else {
+                newData.push({
+                    nickname: item.nickname,
+                    notelist: [item]
+                });
+            }
+        });
+        return newData
     }
     return (
         <>
-            <FloatingBubble
-                style={{
-                    '--initial-position-bottom': '72px',
-                    '--initial-position-right': '24px',
-                    '--edge-distance': '24px',
-                    '--size': '60px',
-                }}
-                onClick={() => setVisible(true)}
-            >
-                <AddOutline fontSize={32} />
-            </FloatingBubble>
-            <div className="m-3 bg-white flex">
-                <Dropdown className="  inline-block w-1/3">
-                    <Dropdown.Item key='sorter' title='排序'>
-                        <div style={{ padding: 12 }}>
-                            <Radio.Group defaultValue='default'>
-                                <Space direction='vertical' block>
-                                    <Radio block value='default'>
-                                        综合排序
-                                    </Radio>
-                                    <Radio block value='nearest'>
-                                        距离最近
-                                    </Radio>
-                                    <Radio block value='top-rated'>
-                                        评分最高
-                                    </Radio>
-                                </Space>
-                            </Radio.Group>
-                        </div>
-                    </Dropdown.Item>
-                </Dropdown>
-                <Input className=" inline-block border" readOnly></Input>
-            </div>
-
-
-            <ActionSheet
-                visible={visible}
-                actions={actions}
-                onClose={() => setVisible(false)}
-            />
-            {/* <Tabs>
-                <Tabs.Tab title='笔记' key='fruits'>
-                    <Showlist items={books} handleclick={()=>{history.push(path.displaynote)}} />
-                </Tabs.Tab>
-                <Tabs.Tab title='卡组' key='vegetables'>
-                    <Showlist items={cards} handleclick={ ()=>{history.push(path.displaycard)}} />
-                </Tabs.Tab>
-                <Tabs.Tab title='导图' key='animals'>
-                    <Showlist items={mindmaps} handleclick={()=>{history.push(path.displaymindmap)}} />
-                </Tabs.Tab>
-            </Tabs> */}
+            <FloatButton onClick={() => setVisible(true)} />
+            <ActionSheet visible={visible} actions={actions} onClose={() => setVisible(false)} />
+            <Card className=" m-3" bodyClassName='m-2 align-middle text-xl text-center'>
+                当前小组：{groupName}
+            </Card>
+            小组成员：
+            <Collapse accordion>
+                {toMembers()?.map(item => (
+                    <Collapse.Panel key={item.nickname} title={" "+item.nickname+" 的笔记"}>
+                        <List style={liststyle}>
+                            {item.notelist.map((note: NoteVo) => {
+                                return <List.Item key={note.title} onClick={()=>{
+                                    handleClicNote(note)}}>{note.title}</List.Item>
+                            })}
+                        </List>
+                    </Collapse.Panel>
+                ))}
+            </Collapse>
 
         </>
     );

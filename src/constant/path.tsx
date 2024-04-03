@@ -18,8 +18,9 @@ const displaynote = '/studygroup/display/note';
 const displaycard = '/studygroup/display/card';
 const displaymindmap = '/studygroup/display/mindmap';
 const pubmanager = '/studygroup/pubmanager';
+
 const groupmanager = '/studygroup/groupmanager';
-const joingroup = '/studygroup/joingroup';
+const addnewgroup = '/studygroup/addnewgroup';
 
 const my = '/my/my';
 const changenickn = '/my/changenickn';
@@ -41,7 +42,7 @@ export const path = {
     studyGroup,
     pubmanager,
     groupmanager,
-    joingroup,
+    addnewgroup,
     displaynote,
     displaycard,
     displaymindmap,

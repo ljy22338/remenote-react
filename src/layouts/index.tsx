@@ -1,5 +1,5 @@
 import { Outlet } from 'umi';
-import { createContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { TabBar } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import {
@@ -52,12 +52,19 @@ export default function Layout() {
     const mainRef = useRef<HTMLElement>(null);
     const footerRef = useRef<HTMLElement>(null);
     const isLogin = useSelector((state: any) => state.user.isLogin)
-    const dispatch = useDispatch()
+    const mode = useSelector((state: any) => state.user.mode)
+
     const [activeKey, setActiveKey] = useState(path.notebook);
     const InfoActiveKey = (e: string) => {
         setActiveKey(e);
         history.push(e);
     }
+
+    useLayoutEffect(() => {
+        document.documentElement.setAttribute(
+            'data-prefers-color-scheme', mode
+        )
+    }, [mode])
     useEffect(() => {
         var headerHeight = headerRef.current?.offsetHeight;
         var footerHeight = footerRef.current?.offsetHeight;
@@ -68,8 +75,12 @@ export default function Layout() {
         if (!mainRef.current) { return }
         const remainingHeight = window.innerHeight - headerHeight - footerHeight;
         mainRef.current.style.height = `${remainingHeight}px`;
-
-    }, [pathname, isLogin]);
+        if (mode === "light") {
+            mainRef.current.style.backgroundColor = 'rgb(248, 248, 248)';
+        }else{
+            mainRef.current.style.backgroundColor = 'rgb(0, 0, 0)';
+        }
+    }, [pathname, isLogin,mode]);
     useEffect(() => {
         console.log(isLogin)
         window.addEventListener('resize', handleResize);
@@ -93,7 +104,7 @@ export default function Layout() {
 
     var bottomTabBar = <></>
     if (mainPath.includes(pathname)) {
-        bottomTabBar = <TabBar activeKey={pathname} onChange={InfoActiveKey} className='bg-white'>
+        bottomTabBar = <TabBar activeKey={pathname} onChange={InfoActiveKey} >
             {tabs.map(item => (
                 <TabBarItem
                     key={item.key} icon={item.icon} title={item.title}></TabBarItem>
@@ -106,11 +117,10 @@ export default function Layout() {
 
     return (
         isLogin
-            ?<>
+            ? <>
                 <header ref={headerRef}>
-                    <div className='h-6 bg-white'></div>
+                    <div className='h-6'></div>
                     <TopNavBar pathname={pathname} />
-
                 </header>
                 <main ref={mainRef} className=''>
                     {
@@ -123,6 +133,6 @@ export default function Layout() {
                     {bottomTabBar}
                 </footer>
             </>
-            :<Login />
+            : <Login />
     );
 }

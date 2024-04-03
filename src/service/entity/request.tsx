@@ -41,7 +41,7 @@ export interface NoteRequest {
     notebookName: string;
     notebookId:number;
     notebookDescription: string;
-    isPublic: string;
+    isPublic: boolean;
     content: string;
     srcNotebook: string;
     srcTitle: string;
@@ -77,7 +77,7 @@ export interface GroupReq {
 //     private String publisher;
 // }
 export interface CommentReq {
-    noteOwnerName: string;
+    noteOwnerUserName: string;
     notebookName: string;
     noteTitle: string;
     content: string;

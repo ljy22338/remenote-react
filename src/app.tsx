@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useLayoutEffect } from 'react';
 import { defineApp } from 'umi';
 import { Provider, useSelector } from "react-redux";
 import store from './store';
@@ -10,7 +10,10 @@ const MyProvider = (props: { children: ReactNode }) => {
 
   return (
     <Provider store={store} >
-      {props.children}
+      <div id="yourElementId">
+        {props.children}
+
+      </div>
     </Provider>
   );
 }

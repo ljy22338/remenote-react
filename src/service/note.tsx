@@ -8,7 +8,19 @@ export const defaultoption = { formatResult: (d: any) => d.data }
 export const runableoption = { formatResult: (d: any) => d.data, manual: true, throwOnError: true, }
 
 
-
+export const allnotes = (username?: string, token?: string) => {
+    if (username == null || token == null) {
+        const user = JSON.parse(localStorage.getItem("user") as string)
+        username = user.username
+        token = user.token
+    }
+    return request(baseUrl + '/note/allnotes', {
+        method: "POST", headers: {
+            "username": username!,
+            "token": token!,
+        }
+    })
+}
 export const notebooklist = (username?: string, token?: string) => {
     if (username == null || token == null) {
         const user = JSON.parse(localStorage.getItem("user") as string)

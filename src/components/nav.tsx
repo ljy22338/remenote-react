@@ -2,19 +2,24 @@ import { Button, NavBar, Popover, TabBar, Toast } from "antd-mobile";
 import { history, useLocation } from "umi";
 import { useState, type FC, type ReactNode, createContext } from 'react';
 import { getnotedetailpath, mainPath, path } from "@/constant/path";
-import { ScanningOutline, HandPayCircleOutline, TransportQRcodeOutline, AntOutline } from "antd-mobile-icons";
+import { ScanningOutline, HandPayCircleOutline, TransportQRcodeOutline, AntOutline, StarFill } from "antd-mobile-icons";
 import { Action } from "antd-mobile/es/components/popover";
 import { observer, useObserver } from "mobx-react";
 import { autorun } from "mobx";
 import { useDispatch, useSelector } from "react-redux";
+import { changeMode } from "@/store/slices/userSlice";
 
 
-export const NavNoback = (props: { title: string }) => (
-    <NavBar className=' bg-white' back='' backArrow={false}>{props.title}</NavBar>
-)
+export const NavNoback = (props: { title: string }) => {
+ 
+    return <>
+        <NavBar  back='' backArrow={false}>
+            {props.title}</NavBar>
+    </>
+}
 
 export const NavBack = (props: { title: string, onBack?: () => void }) => (
-    <NavBar className=' bg-white' back='返回' onBack={() => {
+    <NavBar back='返回' onBack={() => {
         if (props.onBack) {
             props.onBack()
             return
@@ -23,7 +28,7 @@ export const NavBack = (props: { title: string, onBack?: () => void }) => (
     }}>{props.title}</NavBar>
 )
 export const NavBackOrRight = (props: { title: string, right?: ReactNode, onBack?: () => void }) => (
-    <NavBar className=' bg-white' back='返回' right={props.right} onBack={() => {
+    <NavBar back='返回' right={props.right} onBack={() => {
         if (props.onBack) {
             props.onBack()
             return
@@ -31,12 +36,7 @@ export const NavBackOrRight = (props: { title: string, right?: ReactNode, onBack
         history.go(-1)
     }}>{props.title}</NavBar>
 )
-const notedetailActions: Action[] = [
-    { key: 'scan', icon: <ScanningOutline />, text: '分享到小组', onClick: () => { Toast.show('分享到小组') } },
-    { key: 'payment', icon: <HandPayCircleOutline />, text: '允许小组成员编辑' },
-    { key: 'bus', icon: <TransportQRcodeOutline />, text: '生成思维导图' },
-    { key: 'assistant', icon: <AntOutline />, text: '生成记忆卡片' },
-]
+
 
 export const TopNavBar = (props: { pathname: string }) => {
     const title = useSelector((state: any) => state.user.title)
@@ -55,9 +55,7 @@ export const TopNavBar = (props: { pathname: string }) => {
         topNavBar = <NavBack title='笔记本>创建笔记本' />;
 
     } else if (props.pathname.includes(path.notedetail)) {
-        topNavBar = <NavBackOrRight title={title} right={<Popover.Menu actions={notedetailActions} trigger='click' >
-            <Button >点我</Button>
-        </Popover.Menu>} />
+        topNavBar = <NavBackOrRight title={title} />
     }
     //card
     else if (props.pathname === path.rememberCard) {
@@ -87,8 +85,8 @@ export const TopNavBar = (props: { pathname: string }) => {
     else if (props.pathname === path.groupmanager) {
         topNavBar = <NavBack title='学习小组>管理学习小组' />;
     }
-    else if (props.pathname === path.joingroup) {
-        topNavBar = <NavBack title='学习小组>管理学习小组>加入学习小组' />;
+    else if (props.pathname === path.addnewgroup) {
+        topNavBar = <NavBack title='学习小组>管理学习小组>创建小组' />;
     }
     //my
     else if (props.pathname === path.my) {

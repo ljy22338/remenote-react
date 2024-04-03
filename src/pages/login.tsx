@@ -6,7 +6,7 @@ import { runableoption } from "../service/note";
 import Loading from "./loading";
 import { UserVo } from "@/service/entity/response";
 import { useDispatch, useSelector } from "react-redux";
-import { changeIsLogin, changeNickname, changeTitle, changeToken, changeUsername } from "@/store/slices/userSlice";
+import { changeGroupName, changeIsLogin, changeNickname, changeTitle, changeToken, changeUsername } from "@/store/slices/userSlice";
 
 export default function Login() {
     const [username, setUsername] = useState<string>('')
@@ -28,6 +28,7 @@ export default function Login() {
                 dispatch(changeUsername(user.username))
                 dispatch(changeToken(user.token))
                 dispatch(changeNickname(user.nickname))
+                dispatch(changeGroupName(user.groupName))
                 dispatch(changeIsLogin(true))
                 console.log(user)
             }

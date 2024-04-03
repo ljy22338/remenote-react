@@ -24,8 +24,8 @@ export default function NoteList() {
         if(content?.length<=40){return content}
         return content?.substring(0,40)
     }
-    function handleClick(noteTitle: string,notebookName:string) {
-        history.push(path.notedetail,{noteTitle:noteTitle,notebookName:notebookName});
+    function handleClick(note:NoteVo) {
+        history.push(path.notedetail,{note});
     }
     if (loading) return <Loading />
     if (error) return <Loading />
@@ -41,7 +41,7 @@ export default function NoteList() {
                     <List.Item
                         clickable={true}
                         key={book.id}
-                        onClick={() => { handleClick(book.title,book.notebookName) }}
+                        onClick={() => { handleClick(book) }}
                         description={description(book.content)}
                     >
                         {book.title}

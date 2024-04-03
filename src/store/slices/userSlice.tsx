@@ -7,7 +7,9 @@ export const counterSlice = createSlice({
     username:"",
     token: "",
     nickname: "",
+    groupName: "",
     isLogin: false,
+    mode: "light",
   },
   reducers: {
     changeTitle: (state, action) => {
@@ -24,12 +26,18 @@ export const counterSlice = createSlice({
     },
     changeNickname: (state, action) => {
       state.nickname = action.payload;
+    },
+    changeGroupName: (state, action) => {
+      state.groupName = action.payload;
+    },
+    changeMode: (state, action) => {
+      state.mode = action.payload;
     }
   },
 });
 
 // 为每个 case reducer 函数生成 Action creators
-export const {changeTitle,changeToken,changeUsername ,changeIsLogin,changeNickname} = counterSlice.actions;
+export const {changeTitle,changeToken,changeUsername ,changeIsLogin,changeNickname,changeGroupName,changeMode} = counterSlice.actions;
 
 export default counterSlice.reducer;
 
